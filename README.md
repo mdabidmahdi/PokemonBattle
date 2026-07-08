@@ -15,3 +15,6 @@ The program has made 4 normal type moves and 2 type-specific move for each eleme
 After selecting a pokemon, the pokemon will be assigned 2 normal type moves from the 4 randomly.
 Based on the type the 2 type-specific movies will be added to the pokemon.
 
+The player is able to select a pokemon from the 3 at the start of the game, the player  has the option to use one of the moves of the pokemon or  heal their pokemon for 35 HP at a time during the battle. After exhausting all 3 heals the pokemon cannot be healed. 
+
+The Opponent or CPU will select a random pokemon and will also have the option heal their pokemon.
