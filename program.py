@@ -35,7 +35,8 @@ waterMoves = [bubble, water_gun]
 grassMoves = [leaf_cutter, vine_strike]
 
 class Pokemon:
-    def __init__(self, Element_type, name):
+    def __init__(self, Element_type, name, trainer):
+        self.trainer = trainer
         self.name = name
         self.Element_type = Element_type
         self.level = random.randint(1,10)
@@ -66,30 +67,45 @@ class Pokemon:
             self.moves.append(grassMoves[0])
             self.moves.append(grassMoves[1])
 
-
-Charmander = Pokemon('fire')
-Squirtle = Pokemon('water')
-            
+playerName = input('What is your name? ')
 class Player:
     def __init__(self, winState, turn):
         self.winstate = winState
         self.turn = turn
+        self.healChances = 3
     def selectPokemon(self):
         while True:
             selection = input("What pokemon do you want to battle with? (Bulbasaur, Charmander, Squirtle)")
             if selection.lower() == 'bulbasaur':
-                self.pokemon = Pokemon('grass', 'Bulbasaur')
+                self.pokemon = Pokemon('grass', 'Bulbasaur', playerName)
                 break
             elif selection.lower() == 'squirtle':
-                self.pokemon = Pokemon('water', 'Squirtle')
+                self.pokemon = Pokemon('water', 'Squirtle', playerName)
                 break
             elif selection.lower() == 'charmander':    
-                self.pokemon = Pokemon('fire', 'Charmander')
+                self.pokemon = Pokemon('fire', 'Charmander', playerName)
                 break
             else:
                 print('Select a correct pokemon from the avaialbe ones.')
                 continue
+    def randomPokemon(self):
+        randomValue = int(random.randint(1,3))
+        if randomValue == 1:
+                self.pokemon = Pokemon('grass', 'Bulbasaur', "CPU")      
+        elif randomValue == 2:
+                self.pokemon = Pokemon('water', 'Squirtle', "CPU")        
+        elif randomValue == 3:    
+                self.pokemon = Pokemon('fire', 'Charmander', "CPU")
+    def heal(self):
+         if self.pokemon.hp != 100 and self.healChances > 0:
+            self.pokemon.hp + 35
+            self.healChances -= 1
+         else: print('Your pokeon is already at full health!')
+                
 
+userPlayer = Player(0, 1)
+userPlayer.selectPokemon()
+opponent = Player(0, 1)
 
 
 
