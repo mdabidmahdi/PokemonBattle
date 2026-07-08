@@ -35,7 +35,8 @@ waterMoves = [bubble, water_gun]
 grassMoves = [leaf_cutter, vine_strike]
 
 class Pokemon:
-    def __init__(self, Element_type):
+    def __init__(self, Element_type, name):
+        self.name = name
         self.Element_type = Element_type
         self.level = random.randint(1,10)
         self.hp = 100
@@ -65,10 +66,31 @@ class Pokemon:
             self.moves.append(grassMoves[0])
             self.moves.append(grassMoves[1])
 
-Bulbasaur = Pokemon('grass')
+
 Charmander = Pokemon('fire')
 Squirtle = Pokemon('water')
             
+class Player:
+    def __init__(self, winState, turn):
+        self.winstate = winState
+        self.turn = turn
+    def selectPokemon(self):
+        while True:
+            selection = input("What pokemon do you want to battle with? (Bulbasaur, Charmander, Squirtle)")
+            if selection.lower() == 'bulbasaur':
+                self.pokemon = Pokemon('grass', 'Bulbasaur')
+                break
+            elif selection.lower() == 'squirtle':
+                self.pokemon = Pokemon('water', 'Squirtle')
+                break
+            elif selection.lower() == 'charmander':    
+                self.pokemon = Pokemon('fire', 'Charmander')
+                break
+            else:
+                print('Select a correct pokemon from the avaialbe ones.')
+                continue
+
+
 
 
 
