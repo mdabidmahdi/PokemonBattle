@@ -45,7 +45,15 @@ class Pokemon:
         self.defense = randomFloat()
         self.speed = randomFloat()
         self.moves = []
-
+        if self.Element_type == 'fire':
+             self.weakness = 'water'
+             self.immunity = 'grass'
+        if self.Element_type == 'water':
+            self.weakness = 'grass'
+            self.immunity = 'fire'
+        if self.Element_type == 'grass':
+             self.weakness = 'fire'
+             self.immunity = 'water'
     def selectMoves(self):
         type = self.Element_type
         selectionBreaker = 0
@@ -69,10 +77,11 @@ class Pokemon:
 
 playerName = input('What is your name? ')
 class Player:
-    def __init__(self, winState, turn):
+    def __init__(self, winState, turn, name):
         self.winstate = winState
         self.turn = turn
         self.healChances = 3
+        self.name = name
     def selectPokemon(self):
         while True:
             selection = input("What pokemon do you want to battle with? (Bulbasaur, Charmander, Squirtle)")
@@ -103,15 +112,69 @@ class Player:
          else: print('Your pokeon is already at full health!')
                 
 
-userPlayer = Player(0, 1)
+
+
+class Battle:
+    def __init__(self, winner, loser, turn):
+         self.player1 = Player(0, 1)
+         self.player2 = Player(0, 1)
+         self.winner = winner
+         self.loser = loser
+         self.turn = turn
+
+    def startBattle(self):
+        print('Let the battle begin! ' + 'Your pokemon is' + self.player1.pokemon.name)
+        print('Your  facing off pokemon is' + self.player2.name + "Their pokemon is: " + self.player2.pokemon.name)
+        self.player1.pokemon.hp =  self.player1.pokemon.hp * self.player1.pokemone.defense
+        self.player2.pokemon.hp =  self.player2.pokemon.hp * self.player2.pokemone.defense
+        while self.player1.pokemon.hp != 0 and self.player2.pokemon.hp  != 0:
+             playerPokemon = self.player1.pokemon
+             cpuPokemon = self.player2.pokemon
+             
+             while True:
+                  print( playerPokemon.name + "s health is at: " + playerPokemon.pokemon.hp)
+                  print( cpuPokemon.name + "s health is at: " + cpuPokemon.pokemon.hp)
+                  choice = input("Would you like to attack or heal?(a/h) ")
+                  if choice.lower() == 'a':
+                       outputDamage = 0
+                       for x in playerPokemon.moves:
+                            print(x.name)
+                       while True:
+                        selectedMove = input("Select a move you would like to use: ")
+                        for x in playerPokemon.moves:
+                             if selectedMove == x.name and x.isDefensive != True:
+                                  if playerPokemon.weakness == cpuPokemon.weakness:
+                                    Elmentalmultiplier = 2.0
+                                  if playerPokemon.immunity == cpuPokemon.immunity:
+                                    Elmentalmultiplier = 0.5
+                                  outputDamage = x.damage * playerPokemon.attack * Elmentalmultiplier
+                                  break
+                             elif x.isDefensive == True:
+                                 hpincrease = 25
+                                 break
+                  elif choice.lower() == "h" and self.player1.healChances != 0:
+                      self.player1.heal()
+                      break
+                  elif choice.lower() == "h" and self.player1.healChances == 0:
+                      print('You are out of heals! no heals available')
+                      continue
+                    
+
+
+                                  
+                                
+
+                       
+
+    
+
+
+
+
+
+
+
+userPlayer = Player(0, 1, playerName)
 userPlayer.selectPokemon()
-opponent = Player(0, 1)
-
-
-
-
-
-
-
-
+userPlayer.pokemon.selectMoves()
 
