@@ -5,10 +5,10 @@ def randomFloat():
     return value
 
 class Move:  #We will create multiple moves with type distinctions will be picked randomly based on level and type
-    def __init__(self, type, name, power, isDefensive):
+    def __init__(self, type, name, damage, isDefensive):
         self.type = type
         self.name = name
-        self.power = power
+        self.damage = damage
         self.isDefensive = isDefensive
         if isDefensive:
             self.category = "defensive"
@@ -17,16 +17,16 @@ class Move:  #We will create multiple moves with type distinctions will be picke
 
     
   
-quick_attack = Move('normal', 'Quick Attack', 10, False)
-harden = Move('normal', 'Harden', 0, True)
-ember = Move('fire', 'Ember', 20, False)
-leaf_cutter = Move('grass', 'Leaf Cutter', 20, False)
-bubble = Move('water', 'Bubble',  20, False)
-flame = Move('fire', 'Flame',  40, False)
-water_gun= Move('water', 'Water Gun', 40, False)
-vine_strike= Move('grass', 'Vine Strike', 40, False)
-cut =  Move('normal', 'Cut', 20, False)
-pound = Move('normal', 'Pound', 25, False)
+quick_attack = Move('normal', 'quick attack', 10, False)
+harden = Move('normal', 'harden', 0, True)
+ember = Move('fire', 'ember', 20, False)
+leaf_cutter = Move('grass', 'leaf cutter', 20, False)
+bubble = Move('water', 'bubble',  20, False)
+flame = Move('fire', 'flame',  40, False)
+water_gun= Move('water', 'water Gun', 40, False)
+vine_strike= Move('grass', 'vine strike', 40, False)
+cut =  Move('normal', 'cut', 20, False)
+pound = Move('normal', 'pound', 25, False)
 
 
 NormalMoves = [quick_attack, harden, pound, cut]
@@ -42,7 +42,7 @@ class Pokemon:
         self.level = random.randint(1,10)
         self.hp = 100
         self.attack = randomFloat()
-        self.defense = randomFloat()
+        self.defense = round(random.uniform(1,1.5), 2)
         self.speed = randomFloat()
         self.moves = []
         if self.Element_type == 'fire':
@@ -116,7 +116,13 @@ class Player:
 class Battle:
     def __init__(self, winner, loser, turn):
          self.player1 = Player(0, playerName)
+         self.player1.selectPokemon()
+         self.player1.pokemon.selectMoves()
+
+
          self.player2 = Player(0, "CPU")
+         self.player2.randomPokemon()
+         self.player2.pokemon.selectMoves()
          self.winner = winner
          self.loser = loser
          self.turn = turn
@@ -132,21 +138,21 @@ class Battle:
 
 
     def startBattle(self):
-        print('Let the battle begin! ' + 'Your pokemon is' + self.player1.pokemon.name)
-        print('Your  facing off pokemon is' + self.player2.name + "Their pokemon is: " + self.player2.pokemon.name)
-        self.player1.pokemon.hp =  self.player1.pokemon.hp * self.player1.pokemone.defense
-        self.player2.pokemon.hp =  self.player2.pokemon.hp * self.player2.pokemone.defense
+        print('Let the battle begin! ' + 'Your pokemon is: ' + self.player1.pokemon.name)
+        print('Your  facing off  ' + self.player2.name + ", Their pokemon is: " + self.player2.pokemon.name)
+        self.player1.pokemon.hp =  self.player1.pokemon.hp * self.player1.pokemon.defense
+        self.player2.pokemon.hp =  self.player2.pokemon.hp * self.player2.pokemon.defense
         playerPokemon = self.player1.pokemon
         cpuPokemon = self.player2.pokemon
         while self.player1.pokemon.hp != 0 and self.player2.pokemon.hp  != 0:
             battle_turn = self.turn
             player_turn = self.player1.turn
-            cpu_turn = self.play2.turn
-
+            cpu_turn = self.player2.turn
+            player_turn = 1
             if player_turn == 1:
                 while True:
-                    print( playerPokemon.name + "s health is at: " + playerPokemon.pokemon.hp)
-                    print( cpuPokemon.name + "s health is at: " + cpuPokemon.pokemon.hp)
+                    print( playerPokemon.name + "s health is at: " + str(playerPokemon.hp))
+                    print( cpuPokemon.name + "s health is at: " + str(cpuPokemon.hp))
                     outputDamage = 0
                     hpincrease = 0
                     choice = input("Would you like to attack or heal?(a/h) ")
@@ -156,7 +162,7 @@ class Battle:
                         while True:
                             selectedMove = input("Select a move you would like to use: ")
                             for x in playerPokemon.moves:
-                                    if selectedMove == x.name and x.isDefensive != True:
+                                    if selectedMove.lower() == x.name and x.isDefensive != True:
                                         if playerPokemon.weakness == cpuPokemon.weakness:
                                             Elmentalmultiplier = 2.0
                                             outputDamage = x.damage * playerPokemon.attack * Elmentalmultiplier
@@ -172,7 +178,7 @@ class Battle:
                                             cpu_turn = 1
                                             break
                                     else: 
-                                        print("Selecta correct move: ")
+                                        print("Select a correct move: ")
                                         continue
                                     if x.isDefensive == True:
                                         hpincrease = 25
@@ -249,10 +255,5 @@ class Battle:
 
 
 
-
-
-
-userPlayer = Player(0, 1, playerName)
-userPlayer.selectPokemon()
-userPlayer.pokemon.selectMoves()
-
+BattleStart = Battle('none', 'none', 1)
+BattleStart.startBattle()
