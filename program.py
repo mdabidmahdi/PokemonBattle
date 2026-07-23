@@ -15,8 +15,8 @@ class Move:  #We will create multiple moves with type distinctions will be picke
         else:
             self.category = "attack"
 
-    
-  
+   
+
 quick_attack = Move('normal', 'quick attack', 10, False)
 harden = Move('normal', 'harden', 0, True)
 ember = Move('fire', 'ember', 20, False)
@@ -40,10 +40,11 @@ class Pokemon:
         self.name = name
         self.Element_type = Element_type
         self.level = random.randint(1,10)
-        self.hp = 100
+        defense = round(random.uniform(1,1.5), 2)
+        self.hp = 100 * defense
         self.attack = randomFloat()
-        self.defense = round(random.uniform(1,1.5), 2)
         self.speed = randomFloat()
+        self.FULLHP = self.hp
         self.moves = []
         if self.Element_type == 'fire':
              self.weakness = 'water'
@@ -74,7 +75,12 @@ class Pokemon:
         elif type == 'grass':   
             self.moves.append(grassMoves[0])
             self.moves.append(grassMoves[1])
-
+    def hpConversion(self, damage):
+        full = self.FULLHP
+        outputPercentage = (damage / full ) * 100
+        int(outputPercentage)
+        return outputPercentage 
+  
 playerName = input('What is your name? ')
 class Player:
     def __init__(self, turn, name):
@@ -155,8 +161,6 @@ class Battle:
 
         print('Let the battle begin! ' + 'Your pokemon is: ' + self.player1.pokemon.name)
         print('Your  facing off  ' + self.player2.name + ", Their pokemon is: " + self.player2.pokemon.name)
-        self.player1.pokemon.hp =  self.player1.pokemon.hp * self.player1.pokemon.defense
-        self.player2.pokemon.hp =  self.player2.pokemon.hp * self.player2.pokemon.defense
         playerPokemon = self.player1.pokemon
         cpuPokemon = self.player2.pokemon
         while self.player1.pokemon.hp != 0 and self.player2.pokemon.hp  != 0:
@@ -165,10 +169,13 @@ class Battle:
             cpu_turn = self.player2.turn
             cpu_turn = 0
             player_turn = 1
+            currentPlayerHp = playerPokemon.hpConversion(playerPokemon.hp)
+            currentCPUHp =  cpuPokemon.hpConversion(cpuPokemon.hp)
             while player_turn == battle_turn:
+                    print("============================================================")
+                    print( self.player1.name +"'s " + playerPokemon.name + "s health is at: " + str(int(currentPlayerHp)) + "%")
+                    print( self.player2.name +"'s " + cpuPokemon.name + "s health is at:"  + str(int(currentCPUHp)) + "%")
                     
-                    print( playerPokemon.name + "s health is at: " + str(playerPokemon.hp))
-                    print( cpuPokemon.name + "s health is at: " + str(cpuPokemon.hp))
                     outputDamage = 0
                     hpincrease = 0
                     choice = input("Would you like to attack or heal?(a/h) ")
@@ -193,33 +200,44 @@ class Battle:
                             print("Please select a correct move. ")
                             continue
                         if moveChecker == 1:
-                            if outputMove.type != cpuPokemon.weakness and outputMove.type != cpuPokemon.immunity: 
+                            if outputMove.type != cpuPokemon.weakness and outputMove.type != cpuPokemon.immunity and outputMove.isDefensive != True: 
                                 outputDamage = outputMove.damage * playerPokemon.attack
                                 cpuPokemon.hp -= outputDamage
                                 player_turn = 0
                                 cpu_turn = 1
-                                print("You hit them for " + str(outputDamage))
-                                print(playerPokemon.name + " just used " + selectedMove)
+                                print("============================================================")
+                                print( self.player1.name +"'s " + playerPokemon.name + " just used " + selectedMove)
+                                print("You hit them for " + str(int(outputDamage)))
+                                currentCPUHp = cpuPokemon.hpConversion(cpuPokemon.hp)
+                                
+                                
                                 break    
-                            if outputMove.type == cpuPokemon.weakness:
+                            if outputMove.type == cpuPokemon.weakness and outputMove.isDefensive != True: 
                                 Elmentalmultiplier = 2.0
                                 outputDamage = outputMove.damage * playerPokemon.attack * Elmentalmultiplier
                                 cpuPokemon.hp -= outputDamage
                                 player_turn = 0
                                 cpu_turn = 1
-                                print(playerPokemon.name + " just used " + selectedMove)
+                                print("============================================================")
+                                print(self.player1.name +"'s " + playerPokemon.name + " just used " + selectedMove)
                                 print("It's super effective! ")
-                                print("You hit them for " + str(outputDamage))
+                                print("You hit them for " + str(int(outputDamage)))
+                                currentCPUHp = cpuPokemon.hpConversion(cpuPokemon.hp)
+                                
                                 break
-                            if outputMove.type == cpuPokemon.immunity:
+                            if outputMove.type == cpuPokemon.immunity and outputMove.isDefensive != True:
                                 Elmentalmultiplier = 0.5
                                 outputDamage = outputMove.damage * playerPokemon.attack * Elmentalmultiplier
                                 cpuPokemon.hp -= outputDamage
                                 player_turn = 0
                                 cpu_turn = 1
-                                print(playerPokemon.name + " just used " + selectedMove)
+                                print("============================================================")
+                                print(self.player1.name +"'s " + playerPokemon.name + " just used " + selectedMove)
                                 print("It's not very effective! ")
-                                print("You hit them for " + str(outputDamage))
+                                print("You hit them for " + str(int(outputDamage)))
+                                currentCPUHp = cpuPokemon.hpConversion(cpuPokemon.hp)
+                                
+                                
                                 break
                             if outputMove.isDefensive == True:
                                 hpincrease = 25
@@ -227,7 +245,11 @@ class Battle:
                                 cpu_turn = 1
                             
                     elif choice.lower() == "h" and self.player1.healChances != 0:
-                        self.player1.heal()
+                        print("============================================================")
+                        print(self.player1.name + " just healed their pokemon!")
+                        playerPokemon.hp += int(playerPokemon.FULLHP * 0.30)
+                        playerPokemonCPUHp = playerPokemon.hpConversion(playerPokemon.hp)
+                        self.player1.healChances -=1
                         player_turn = 0
                         cpu_turn = 1
                         break
@@ -239,8 +261,6 @@ class Battle:
 
                     
             while cpu_turn == 1:
-                print( playerPokemon.name + "s health is at: " + str(playerPokemon.hp))
-                print( cpuPokemon.name + "s health is at: " + str(cpuPokemon.hp))
                 cpuDamage = 0
                 cpu_hp_increase = 0
                 if self.player2.pokemon.hp > 25:
@@ -251,44 +271,54 @@ class Battle:
                 if choice.lower() == 'a':
                         randomMoveSelectInt = random.randint(0,3)
                         cpuMove = cpuPokemon.moves[randomMoveSelectInt]
-                        if cpuMove.type != playerPokemon.weakness and cpuMove.type != playerPokemon.immunity:
+                        if cpuMove.type != playerPokemon.weakness and cpuMove.type != playerPokemon.immunity and cpuMove.isDefensive != True: 
                             cpuDamage = cpuMove.damage * cpuPokemon.attack
                             playerPokemon.hp -= cpuDamage
+                            
+                            print("============================================================")
+                            print(self.player2.name +"'s " + cpuPokemon.name + " just used " + cpuMove.name)
+                            print("They hit you for " + str(int(cpuDamage)))
+                            currentPlayerHp = playerPokemon.hpConversion(playerPokemon.hp)  
                             player_turn = 1
-                            cpu_turn = 0
-                            print(cpuPokemon.name + " just used " + cpuMove.name)
-                            print("The enemy hit you for " + str(cpuDamage))
-                            print("Your pokemon's hp is now at: " + str(playerPokemon.hp)) 
+                            cpu_turn = 0    
                             break
 
-                        if cpuMove.type == playerPokemon.weakness:
+                        if cpuMove.type == playerPokemon.weakness and cpuMove.isDefensive != True: 
                             Elmentalmultiplier = 2.0
                             cpuDamage = cpuMove.damage * cpuPokemon.attack * Elmentalmultiplier
                             playerPokemon.hp -= cpuDamage
-                            print("The enemy pokemon just used " + cpuMove.name)
-                            print("The enemy hit you for " + str(cpuDamage))
+                            print("============================================================")
+                            print(self.player2.name +"'s " + cpuPokemon.name + " just used " + cpuMove.name)
+                            print("They hit you for " + str(int(cpuDamage)))
                             print("It's super effective! ")
-                            print("Your pokemon's hp is now at: " + str(playerPokemon.hp))    
+                            currentPlayerHp = playerPokemon.hpConversion(playerPokemon.hp)  
                                 
                             player_turn = 1
                             cpu_turn = 0
+                            break
                             
-                        if cpuMove.type == playerPokemon.immunity:
+                        if cpuMove.type == playerPokemon.immunity and cpuMove.isDefensive != True:
                             Elmentalmultiplier = 0.5
                             cpuDamage = cpuMove.damage * cpuPokemon.attack * Elmentalmultiplier
                             playerPokemon.hp -= cpuDamage
-                            print("The enemy pokemon just used " + cpuMove.name)
-                            print("The enemy hit you for " + str(cpuDamage))
-                            print("It's not very effective. ")
-                            print("Your pokemon's hp is now at: " + str(playerPokemon.hp))    
+                            print("============================================================")
+                            print(self.player2.name +"'s " + cpuPokemon.name + " just used " + cpuMove.name)
+                            print("They hit you for " + str(int(cpuDamage)))
+                            print("It's not very effective.")
+                            currentPlayerHp = playerPokemon.hpConversion(playerPokemon.hp)  
                             player_turn = 1
                             cpu_turn = 0
+
+                            break
                         if cpuMove.isDefensive == True:
+                            print(cpuPokemon.name + " just used " + cpuMove.name)
                             hpincrease = 25
                             player_turn = 0
                             cpu_turn = 1
+                            break
                     
                 elif choice.lower() == "h" and self.player1.healChances != 0:
+                    
                     self.player2.heal()
                     player_turn = 1
                     cpu_turn = 0
@@ -302,9 +332,9 @@ class Battle:
 BattleStart = Battle('none', 'none', 1)
 BattleStart.startBattle()
 
-#Fix HP number Display
-#Fix display of pokemon's trainer's name during battle
+
+
+
 #Fix harden usage
 #Fix heal usage
-#Remove text clutter and a make text readability less cluttered
 #Fix win and lose conditions
